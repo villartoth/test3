@@ -176,6 +176,16 @@ window.gameReady = function () { window.OFFLINE_GAMEREADY = true; setTimeout(fun
     if (ok()) { wake(); clearInterval(poll); return; }
     if (n > 16) { wake(); clearInterval(poll); }
   }, 500);
+  // keep nudging the start hook after first wake - if the engine's scene assembly finishes
+  // after the single early dispatch it would otherwise miss it forever (ad9 lesson)
+  setTimeout(function () {
+    var k = 0;
+    var iv = setInterval(function () {
+      if (k++ > 20) { clearInterval(iv); return; }
+      try { window.gameStart && window.gameStart(); } catch (e) {}
+      try { document.dispatchEvent(new Event('PLAYABLE:gameStart')); } catch (e) {}
+    }, 1000);
+  }, 1000);
 })();
 </script>
 <script>
