@@ -129,7 +129,8 @@ window.MW_CONFIG = {
   function rm() { if (d.parentNode) d.parentNode.removeChild(d); }
   document.addEventListener('DOMContentLoaded', function () { try { document.body.appendChild(d); } catch (e) {} });
   document.addEventListener('PLAYABLE:gameStart', rm);
-  window.addEventListener('load', function () { setTimeout(rm, 20000); });
+  window.addEventListener('luna:started', rm);
+  window.addEventListener('load', function () { setTimeout(rm, 8000); });
 })();
 </script>
 
@@ -137,7 +138,7 @@ window.MW_CONFIG = {
 <script>
 // unity-fix: replaces MTG offline package - WindVane container bridge and mv:// iframes removed
 window.MTG_OFFLINE_PACKAGE = { isRender_h5_close: 0, triggerGameStart: function () { try { window.gameStart && window.gameStart(); } catch (e) {} } };
-window.gameReady = function () { window.OFFLINE_GAMEREADY = true; };
+window.gameReady = function () { window.OFFLINE_GAMEREADY = true; setTimeout(function () { try { window.MTG_OFFLINE_PACKAGE && window.MTG_OFFLINE_PACKAGE.triggerGameStart(); } catch (e) {} }, 200); };
 </script>
 <script>
   function gameStart() {
@@ -182,9 +183,9 @@ window.gameReady = function () { window.OFFLINE_GAMEREADY = true; };
   window.addEventListener("luna:build", () => {
     window.pi.logLoaded(),window.dispatchEvent(new Event("luna:unsafe:pause")),(function(){
 var n=!1,o=!1;
-function t(){n||(n=!0,window.dispatchEvent(new Event("luna:start")),window.addEventListener("luna:started",function(){setTimeout(r,300)},{once:!0}),setTimeout(r,6000))}
+function t(){if(n)return;n=!0;window.dispatchEvent(new Event("luna:start"));window.addEventListener("luna:started",function(){setTimeout(r,300)},{once:!0});setTimeout(r,6000);var c=0,w=setInterval(function(){c+=1;16<c?clearInterval(w):(!window.mraid||ok())&&r()},1000)}
 function ok(){try{return mraid.isViewable()&&"hidden"!==mraid.getState()}catch(x){return!1}}
-function r(){try{window.dispatchEvent(new Event("luna:unsafe:resume"))}catch(x){}}
+function r(){try{window.dispatchEvent(new Event("luna:unsafe:resume"))}catch(x){}try{window.gameStart&&window.gameStart()}catch(x){}}
 function chk(){ok()?n?o&&(o=!1,window.dispatchEvent(new Event("luna:resume"))):t():n&&!o&&(o=!0,window.dispatchEvent(new Event("luna:pause")))}
 if(window.mraid&&window.mraid.getState){var e=function(){try{mraid.addEventListener("viewableChange",chk)}catch(x){}try{mraid.addEventListener("stateChange",chk)}catch(x){}chk()};"loading"===mraid.getState()?mraid.addEventListener("ready",e):e();var c=0,p=setInterval(function(){n?(clearInterval(p),0):ok()?(t(),clearInterval(p)):(c+=1,16<c&&(t(),clearInterval(p)))},500)}else t()}());
   }),
